@@ -1,53 +1,48 @@
 const fi = (() => {
   return {
     libraryMethod: function() {
-      return 'Start by reading https://medium.com/javascript-scene/master-the-javascript-interview-what-is-functional-programming-7f218c68b3a0'
+      return 'Start by reading https://medium.com/javascript-scene/master-the-javascript-interview-what-is-functional-programming-7f218c68b3a0';
     },
 
-    each: function(collection, iteratee) {
-      const newCollection = (collection instanceof Array) ? collection.slice() : Object.values(collection)
+    each: function(collection, callbackFn) {
+      const newCollection = (collection instanceof Array) ? collection.slice() : Object.values(collection);
       for (let i = 0; i < newCollection.length; i++) {
-        iteratee(newCollection[i]);
+        callbackFn(newCollection[i]);
       }
-      return collection
+      return collection;
     },
 
-    map: function(collection, iteratee) {
-      const outputArray = []
+    map: function(collection, callbackFn) {
+      const outputArray = [];
       if (!(collection instanceof Array)) {
         collection = Object.values(collection);
       }
       for (let i = 0; i < collection.length; i++) {
-        outputArray.push(iteratee(collection[i]));
+        outputArray.push(callbackFn(collection[i]));
       }
       return outputArray;
     },
 
-		reduce: function(c = [], callback = () => {}, acc) {
-			let collection = c.slice(0)
-
-			if (!acc) {
-				acc = collection[0]
-				collection = collection.slice(1)
+		reduce: function(c = [], callback = () => {}, accumulator) {
+			let collection = c.slice(0);
+			if (!accumulator) {
+				accumulator = collection[0];
+				collection = collection.slice(1);
 			}
-
-			let len = collection.length;
-
-			for (let i = 0; i < len; i++) {
-				acc = callback(acc, collection[i], collection)
-			}
-			return acc;
+			// let len = collection.length;
+			for (let i = 0; i < collection.length; i++) {
+				accumulator = callback(accumulator, collection[i], collection);
+      }
+			return accumulator;
 		},
 
     find: function(collection, predicate) {
       if (!(collection instanceof Array)) {
         collection = Object.values(collection);
       }
-
       for (let i = 0; i < collection.length; i++) {
         if (predicate(collection[i])) return collection[i];
       }
-
       return undefined;
     },
 
@@ -56,13 +51,11 @@ const fi = (() => {
       if (!(collection instanceof Array)) {
         collection = Object.values(collection);
       }
-
       for (let i = 0; i < collection.length; i++) {
         if (predicate(collection[i])) {
           resultingArray.push(collection[i]);
         }
       }
-
       return resultingArray;
     },
 
@@ -112,7 +105,7 @@ const fi = (() => {
       return resultingArray;
     },
 
-    uniqSorted: function(collection, iteratee) {
+    uniqSorted: function(collection, callbackFn) {
       const sorted = [collection[0]];
       for (let i = 1; i < collection.length; i++) {
         if (sorted[i - 1] !== collection[i]) {
@@ -122,16 +115,16 @@ const fi = (() => {
       return sorted;
     },
 
-    uniq: function(collection, sorted = false, iteratee = false) {
+    uniq: function(collection, sorted = false, callbackFn = false) {
       if (sorted) {
-        return fi.uniqSorted(collection, iteratee);
-      } else if (!iteratee) {
+        return fi.uniqSorted(collection, callbackFn);
+      } else if (!callbackFn) {
         return Array.from(new Set(collection));
       } else {
         const modifiedvalues = new Set();
         const uniqvalues = new Set();
         for (let value of collection) {
-          const moddedvalue = iteratee(value);
+          const moddedvalue = callbackFn(value);
           if (!modifiedvalues.has(moddedvalue)) {
             modifiedvalues.add(moddedvalue);
             uniqvalues.add(value);
@@ -142,7 +135,6 @@ const fi = (() => {
     },
 
     keys: function(obj) {
-      // Using for loop
       const keys = [];
       for (let key in obj) {
         keys.push(key);
@@ -151,31 +143,31 @@ const fi = (() => {
     },
 
     values: function(obj) {
-      // Using for loop
       const values = [];
       for (let key in obj) {
         values.push(obj[key]);
       }
       return values;
-
-      // Using the custom 'map' method from above
-      // return this.map(obj, (valueue) => valueue)
     },
 
     functions: function(obj) {
       const functionNames = [];
-
       for (let key in obj) {
         if (typeof obj[key] === "function") {
           functionNames.push(key);
         }
       }
-
       return functionNames.sort();
     }
   }
 })();
 
+
+// Mic check, one, two...
+console.log("Functions in here: ", fi.functions(fi).join(", "));
+
+
+// some browser noise...
 document.addEventListener("DOMContentLoaded", () => {
   let txt = fi.libraryMethod().split(" ");
   let regular = txt.slice(0, 3).join(" ");
